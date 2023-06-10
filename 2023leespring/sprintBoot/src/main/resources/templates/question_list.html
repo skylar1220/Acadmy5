@@ -1,27 +1,64 @@
-<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" >
+ <th:block th:fragment="content">
+       <link th:replace="layout :: link" />
+   </th:block>
+
 <script th:src = "@{/js/bootstrap.bundle.min.js}"  ></script>
-<html layout:decorate="~{layout}">   
-   <div layout:fragment="content" class="container">      
-      <table class="table">
+
+<div class="container">
+
+<!-- 네비게이션 -->
+<nav th:replace="layout :: nav"  />
+
+
+<!-- 질문 리스트 테이블 -->
+<!--<html layout:decorate="~{layout}">   
+   <div layout:fragment="content" class="container">    --> 
+      <table class="table" >
          <thead class="table-dark">
             <th>순번</td>
             <th>제목</td>
             <th>생성날자</td>
          </thead>
          <tbody>
-            <tr th:each="question,idx : ${qlist}">
+            <tr th:each="question,idx : ${paging}">
                <td th:text =${idx.count}></td>    
                 <td>
                   <a th:href = "@{|/question/detail/${question.id}|}" th:text = "${question.subject}"></a>
                </td>    
-                <td th:text = "${question.createDate}"></td>
+				<td th:text = "${#temporals.format(question.createDate,'yyyy-MM-dd HH-mm')}"></td>
               </tr>
          </tbody>
       </table>
+      
+     		
+
+
+      
+<!-- 페이징 -->
+<nav aria-label="...">
+  <ul class="pagination">
+	  
+    <li class="page-item" th:classappend = "${ !paging.hasPrevious } ? 'disabled' ">
+      <a class="page-link"  th:href="@{|?page=${paging.number-1}|}">이전</a>
+    </li>
+    
+    <li th:each=" page :${#numbers.sequence(0, paging.totalPages-1)}"
+    	th:classappend = "${page == paging.number} ? ' active' " 
+    >
+		<a class="page-link" th:href="@{|?page=${page}|}" th:text = "${page}+1"></a>
+	</li>
+	 
+    <li class="page-item" th:classappend = "${ !paging.hasNext } ? 'disabled' ">
+      <a class="page-link" th:href="@{|?page=${paging.number+1}|}">이후</a>
+    </li>
+    
+  </ul>
+</nav>
+
       <input type="button" value="질문 등록하기" 
-      class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-   </div>
-         
+      class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+      
+</div>     
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">

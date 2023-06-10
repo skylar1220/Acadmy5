@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,11 @@ public class QuestionService {
 	public List<Question> getList(){
 		return qeustionRepository.findAll();
 	}
+	
+	public Page<Question> getList(int page){
+		Pageable pageable =  PageRequest.of(page, 10);
+		return qeustionRepository.findAll(pageable);
+	}
 
 	public Question getDetail(Integer id) {		
 		Optional<Question> q =  qeustionRepository.findById(id);
@@ -31,8 +39,6 @@ public class QuestionService {
 	public void create(Question question) {
 		question.setCreateDate(LocalDateTime.now());
 		qeustionRepository.save(question);
-		
-		
 	}
 
 	

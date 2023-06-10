@@ -28,9 +28,11 @@ public class Question {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)  // 자동 증가속성
 	private Integer id;
 	
+	@NotEmpty(message = "유저명은 필수입니다.")
 	@Column(length = 200) // db 용도
 	private String subject;
 	
+	@NotEmpty(message = "유저명은 필수입니다.")
 	@Column(columnDefinition = "TEXT")
 	private String content;
 	
