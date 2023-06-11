@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<link th:replace="layout :: link" />
+	<script th:replace="layout :: script" />
+</head>
+<body>
+	<div class="container">
+		<!--네비게이션 바-->
+		<nav th:replace="layout :: nav"  />
+		
+		
+		<form th:action="@{/member/signup}"  th:object="${memberForm}" method="post">
+			<div class="mb-3">
+				<label for="userName" class="form-label">이름</label>
+				<input type="text" class="form-control" th:field = "*{userName}">
+				<div class="alert alert-warning" 
+				th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>				
+			</div>
+			<div class="mb-3">
+				<label  class="form-label">패스워드</label>
+				<input type="password" class="form-control" th:field = "*{password}">
+				<div class="alert alert-warning" 
+				th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+			</div>
+			<div class="mb-3">
+				<label  class="form-label">패스워드확인</label>
+				<input type="password" class="form-control" th:field = "*{confirmPassword}">
+				<div class="alert alert-warning" 
+				th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+			</div>
+			<div class="mb-3">
+				<label for="exampleInputEmail1" class="form-label">Email address</label>
+				<input type="email" class="form-control" th:field = "*{email}">
+				<!--<div class="alert alert-warning" 
+				th:if="${#fields.hasErrors('signupFailed')}" th:errors="*{signupFailed}"></div>-->				
+			</div>			
+			
+			<button type="submit" class="btn btn-dark">회원가입</button>
+			<button type="submit" class="btn btn-secondary">취소</button>
+		</form>
+	</div>
+</body>
+
+</html>

@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.demo.member.Member;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -35,12 +39,13 @@ public class QuestionController {
 	
 
 	@PostMapping("/create" )
-	public String create(@Valid Question question , BindingResult bindingResult) {
+	public String create(@Valid Question question , BindingResult bindingResult, HttpServletRequest req
+			) {
 		if(!bindingResult.hasErrors()) {
-//			Question question = new Question();
-//			question.setSubject(questionForm.getSubject());
-//			question.setContent(questionForm.getContent());
+			HttpSession session = req.getSession();
+			question.setMember((Member )session.getAttribute("member"));
 			questionService.create(question);
+			
 		}
 		return "redirect:/question/list";
 	}
@@ -48,12 +53,18 @@ public class QuestionController {
 	@GetMapping("/list")
 //	@ResponseBody
 	public String list(Model model
-			, @RequestParam(value = "page" , defaultValue = "0" ) int page
+			, @RequestParam(value = "page" , defaultValue = "0" ) int page,
+			HttpServletRequest req
 			) {	
 		Page<Question> paging = questionService.getList(page);
 		// paging.hasPrevious()
 		// paging.getTotalPages();
 		model.addAttribute("paging", paging);
+		
+		HttpSession session = req.getSession();
+		if(session.getAttribute("member") != null) {
+			model.addAttribute("isLogin", true);
+		}
 		return "question_list";
 	}
 	

@@ -1,83 +1,104 @@
- <th:block th:fragment="content">
-       <link th:replace="layout :: link" />
-   </th:block>
-
-<script th:src = "@{/js/bootstrap.bundle.min.js}"  ></script>
-
+<link th:replace="layout :: link" />
+<script th:replace="layout :: script" />
+	
 <div class="container">
+	<!--네비게이션 바-->
+	<!--<nav th:replace="layout :: nav"  />-->
+	
+	<nav th:fragment="nav" class="navbar navbar-expand-lg navbar-dark "
+		style="background-color: rgb(35, 35, 35); margin-bottom: 10px; margin-top: 10px;">
+		<div class="container-fluid">
+			<a class="navbar-brand" th:href="@{/question/list}">게시판</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+				aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
 
-<!-- 네비게이션 -->
-<nav th:replace="layout :: nav"  />
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item" th:unless="${isLogin}">
+						<a class="nav-link active" th:href="@{|/member/signin|}">로그인</a>
+					</li>
+					<li class="nav-item" th:unless="${isLogin}">
+						<a class="nav-link" th:href="@{|/member/signup|}">회원가입</a>
+					</li>
+					<li class="nav-item" th:if="${isLogin}">
+						<a class="nav-link" th:href="@{|/member/signup|}">로그아웃</a>
+					</li>
+				</ul>
 
+			</div>
+		</div>
+	</nav>
 
-<!-- 질문 리스트 테이블 -->
-<!--<html layout:decorate="~{layout}">   
-   <div layout:fragment="content" class="container">    --> 
-      <table class="table" >
-         <thead class="table-dark">
-            <th>순번</td>
-            <th>제목</td>
-            <th>생성날자</td>
-         </thead>
-         <tbody>
-            <tr th:each="question,idx : ${paging}">
-               <td th:text =${idx.count}></td>    
-                <td>
-                  <a th:href = "@{|/question/detail/${question.id}|}" th:text = "${question.subject}"></a>
-               </td>    
-				<td th:text = "${#temporals.format(question.createDate,'yyyy-MM-dd HH-mm')}"></td>
-              </tr>
-         </tbody>
-      </table>
-      
-     		
-
-
-      
-<!-- 페이징 -->
+<!--<html layout:decorate="~{layout}">	
+	<div layout:fragment="content" class="container">-->		
+	
+		<table class="table">
+			<thead class="table-dark">
+				<th>순번</td>
+				<th>제목</td>
+				<th>작성자</td>
+				<th>생성날짜</td>
+			</thead>
+			<tbody>
+				<tr th:each="question,idx : ${paging}">
+					<td th:text =${idx.count}></td>    
+		    		<td>
+						<a th:href = "@{|/question/detail/${question.id}|}" th:text = "${question.subject}"></a>
+						<span class="text-danger" th:if=" ${question.answerList.size} > 0 " th:text="${question.answerList.size}"></span>
+					</td>    
+		    		<td th:if ="${question.member != null }" th:text = "${question.member.userName}"></td>
+		    		<td th:if ="${question.member == null }"></td>
+		    		<td th:text = "${#temporals.format(question.createDate,'yyyy-MM-dd HH-mm')}"></td>
+		  		</tr>
+			</tbody>
+		</table>
+<!--페이징-->
 <nav aria-label="...">
   <ul class="pagination">
-	  
-    <li class="page-item" th:classappend = "${ !paging.hasPrevious } ? 'disabled' ">
-      <a class="page-link"  th:href="@{|?page=${paging.number-1}|}">이전</a>
+    <li class="page-item" th:classappend = "${!paging.hasPrevious() }? 'disabled'">
+      <a class="page-link" th:href="@{|?page=${paging.number-1}|}">이전</a>
     </li>
     
-    <li th:each=" page :${#numbers.sequence(0, paging.totalPages-1)}"
-    	th:classappend = "${page == paging.number} ? ' active' " 
+    <li th:each="page : ${#numbers.sequence(0,paging.totalPages-1)}"
+    	th:classappend = "${page == paging.number }? 'active' "
     >
-		<a class="page-link" th:href="@{|?page=${page}|}" th:text = "${page}+1"></a>
-	</li>
-	 
-    <li class="page-item" th:classappend = "${ !paging.hasNext } ? 'disabled' ">
-      <a class="page-link" th:href="@{|?page=${paging.number+1}|}">이후</a>
+			<a class="page-link" th:href="@{|?page=${page}|}" th:text = "${page}+1"></a>
     </li>
+
     
+    <li class="page-item">
+      <a class="page-link" th:href="@{|?page=${paging.number+1}|}" 
+      th:classappend = "${!paging.hasNext() }? 'disabled'">이후</a>
+    </li>
   </ul>
 </nav>
-
-      <input type="button" value="질문 등록하기" 
-      class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-      
-</div>     
+		
+		
+		
+		
+		<input type="button" value="질문 등록하기" 
+		class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+	</div>
+			
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-		<form th:action="@{/question/create}" th:object="${question}" th:method="post"> <!--controller의 question과 똑같게-->
+      <form th:action = "@{/question/create}"  method="post">		  
 	      <div class="modal-header">
-			 <input type="text" name="subject" style="width: 100%;">
+	        <input type="text" name="subject" style="width: 100%">
 	      </div>
-	      
 	      <div class="modal-body">
 			<textarea name="content" rows="10" style="width: 100%;"></textarea>
 	      </div>
-	      
 	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-	        <button type="submit" class="btn btn-primary">질문 등록</button>
+	        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">닫기</button>
+	        <button type="submit" class="btn btn-secondary">등록</button>
 	      </div>
-     	</form>
+      </form>
     </div>
   </div>
-</div>      
-</html>
+</div>		
+<!--</html>-->

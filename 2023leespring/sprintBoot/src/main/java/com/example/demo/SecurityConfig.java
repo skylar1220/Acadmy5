@@ -13,35 +13,41 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-	// CSRF (Cross Site Request Forgery)
-	// CSRF 토큰 값을 발행 실제 페이지에서 발행된 정보인지 검증하는 기술
-		// @remova
-	   @Bean
-	   SecurityFilterChain filterChanin(HttpSecurity http) throws Exception {
-	      http
-	         .authorizeHttpRequests((authorizeHttpRequests) ->
-	            {
+// CSRF (Cross Site Request Forgery)
+// 	CSRF 토큰값을 발행 실제페이지에서 발행된 정보인지 검증하는 기술
+	@SuppressWarnings("removal")
+	@Bean
+	SecurityFilterChain filterChanin(HttpSecurity http) throws Exception {
+		http
+			.authorizeHttpRequests((authorizeHttpRequests) ->
+				{
 					try {
 						authorizeHttpRequests
-						   .requestMatchers("/**").permitAll()
-						   .and()
-						   .csrf()
-						   .ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"))
-						   .and()
-						   .headers()
-						   .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-						   ;
+						.requestMatchers("/**").permitAll()
+						.and()
+						.csrf()
+						.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"))
+						.and()
+						.headers()
+						.addHeaderWriter(
+								new XFrameOptionsHeaderWriter(
+										XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+						;
+						
 					} catch (Exception e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}
-	         );
-	         
-	      return http.build();
-	      
-	   }
+				}				
+			);		
+			
+		return http.build();
+		
+	}
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
+	
 }

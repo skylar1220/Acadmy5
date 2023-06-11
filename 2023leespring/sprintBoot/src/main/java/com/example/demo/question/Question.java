@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.repository.query.parser.Part.IgnoreCaseType;
 
 import com.example.demo.answer.Answer;
+import com.example.demo.member.Member;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,6 +14,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -23,6 +25,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @Entity
+@ToString
 public class Question {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)  // 자동 증가속성
@@ -40,4 +43,7 @@ public class Question {
 	
 	@OneToMany(mappedBy = "question" , cascade = CascadeType.REMOVE)
 	private List<Answer> answerList;
+	
+	@ManyToOne
+	private Member member;
 }
