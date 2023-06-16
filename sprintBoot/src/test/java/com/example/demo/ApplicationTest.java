@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,16 @@ public class ApplicationTest {
 		a.setCreateDate(LocalDateTime.now());
 		a.setQuestion(q);
 		ar.save(a);
+		
+		List<Question> list = qr.findBySubject("2.제목입니다");
+		q = lists.get(0);
+		assertNotNull(q);
+		
+		Answer aa = new Answer();
+		a.setContent("2. 스프링 부트는 경량 웹프레임웍이며 최근에 많이 사용하고 있습니다.\n 또한 자주사용하는 설정을 미리 셋팅할수 있고 그밖에 많은 장점들이 있습니다.");
+		a.setCreateDate(LocalDateTime.now());
+		a.setQuestion(q);
+		ar.save(a);
 	}
 	
 	/**
@@ -63,15 +74,23 @@ public class ApplicationTest {
 	@Order(2)
 	@Transactional
 	public void testjpa2() {
-		// 답변 찾기
-		// 전부찾아서 개수가 1개이상인지 체크하고. 그중에 가장 첫번째 답변을 가져온다
-		List<Answer> arlists =  ar.findAll();
-		assertTrue(arlists.size() > 0);
-		Answer ans =  arlists.get(0);
-		ans.getContent();
-		// 조회를 하고나면 DB세션이 끊어진다 필요한 시점에 데이터를 가져오는 방식을 Lazy방식
-		
-		
-		
+		List<Answer> arlist = ar.findAll();
+		assertTrue(arlist.size()>0);
+		Answer ans = arlist.get(0);
+		Question q = ans.getQuestion();
+		Optional<Question> oq = qr.findById(q.getId());
+		assertTrue(oq.isPresent());
+		System.out.println("##########"+ q.toString());
 	}
 }
+
+
+
+
+
+
+
+
+// arlist 결과
+// Answer [id=3, 스프링 부트는 경량 웹프레임웍이며 최근에 많이 사용하고 있습니다., question=com.example.demo.Question@2ac7c683], 
+// Answer [id=4, c], Answer [id=5,], Answer [id=6,], Answer [id=7,]]

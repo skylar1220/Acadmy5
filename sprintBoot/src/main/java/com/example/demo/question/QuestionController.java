@@ -3,13 +3,22 @@ package com.example.demo.question;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.demo.member.Member;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -25,24 +34,51 @@ import lombok.RequiredArgsConstructor;
 public class QuestionController {
 //	@Autowired
 //	QuestionRepository question;
-//	private final QuestionRepository question;
 	
 	private final QuestionService questionService;
 	
+	@PostMapping("/create")
+	public String create(@Valid Question question, BindingResult bindingResult,
+			HttpServletRequest req) {
+		if(!bindingResult.hasErrors()) {
+			HttpSession session =req.getSession();
+			question.setMember( (Member)session.getAttribute("member"));
+			questionService.create(question);	
+		}				
+		return "redirect:/question/list";
+	}
+	
+	
 	@GetMapping("/list")
 //	@ResponseBody
-	public String list(Model model) {
-		List<Question> questionLists =  questionService.getList();
-		model.addAttribute("qlist", questionLists);		
+	public String list(Model model, HttpServletRequest req
+			,@RequestParam(value = "page", defaultValue = "0") int page			
+			) 
+	{
+		Page<Question> paging =  questionService.getList(page);		
+		model.addAttribute("paging", paging);
+		
+		HttpSession session = req.getSession();
+		if(session.getAttribute("member") != null) {
+			model.addAttribute("isLogin", true);
+		}
 		return "question_list";
 	}
 	
 	
 	@GetMapping("/detail/{id}")
-	public String detail(Model model, @PathVariable("id") Integer id) {
-		Question qeustion =  questionService.getDetail(id);
-		model.addAttribute("question", qeustion);
-		return "qeustion_detail";
+	public String detail(Model model
+			, @PathVariable("id") Integer id
+			, HttpServletRequest req
+			) {		
+		HttpSession session = req.getSession();
+		if(session.getAttribute("member") != null ) {
+			model.addAttribute("isLogin", true);
+		}
+		
+		Question question =  questionService.getDetail(id);		
+		model.addAttribute("question", question);
+		return "question_detail";
 	}
 	
 }

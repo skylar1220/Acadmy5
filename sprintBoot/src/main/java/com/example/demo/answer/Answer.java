@@ -2,6 +2,7 @@ package com.example.demo.answer;
 
 import java.time.LocalDateTime;
 
+import com.example.demo.member.Member;
 import com.example.demo.question.Question;
 
 import jakarta.persistence.Column;
@@ -29,4 +30,7 @@ public class Answer {
 	
 	@ManyToOne  // 데이터 베이스에서는 FK
 	private Question question;
+	
+	@ManyToOne
+	private Member member;
 }

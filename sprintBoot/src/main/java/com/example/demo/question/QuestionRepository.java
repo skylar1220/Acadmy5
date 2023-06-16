@@ -2,6 +2,8 @@ package com.example.demo.question;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 /**
@@ -20,4 +22,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
 	List<Question> findBySubject(String str);
 	List<Question> findBySubjectAndContent(String subject, String content);
 	List<Question> findBySubjectLike(String str);
+	// 기본 제공되는 메소드인 findAll을 재 정의
+	Page<Question> findAll(Pageable pageable);
 }
