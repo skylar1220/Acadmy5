@@ -1,0 +1,91 @@
+<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" >
+<script th:src = "@{/js/bootstrap.bundle.min.js}"  ></script>
+<script type="text/javascript">
+	function confirmDelete(id){
+		if(confirm("삭제하시겠습니까?")){
+			location.href = "/question/delete/"+id;
+		}
+	}
+</script>
+
+<div class="container">
+	<!--네비게이션 바-->
+<nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: rgb(192, 192, 192);">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{|/question/list|}">게시판</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      
+      <ul class="navbar-nav" th:if = "${isLogin}">	<!--로그인이 되어 있으면-->	  
+        <li class="nav-item">
+          <a class="nav-link "th:href="@{|/member/signout|}">로그아웃</a>
+        </li>                        
+      </ul>
+      <ul class="navbar-nav" th:unless = "${isLogin}">   <!--로그인이 아니면-->		  
+        <li class="nav-item">
+          <a class="nav-link "th:href="@{|/member/signin|}">로그인</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{|/member/signup|}">회원가입</a>
+        </li>                
+      </ul>
+      
+    </div>
+  </div>
+</nav>
+	
+	<!--본문-->
+	<h2 th:text = "${question.subject}"></h2>
+	
+	<div class="card" style="margin-top: 20px">
+	  <div class="card-body">
+	    <div th:text = "${question.content}" style="white-space: pre;"></div>
+	  </div>
+	</div>
+	
+	<div class="my-3" th:if = "${isModify}" >
+		<input type="button" value="수정" 
+			class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">		
+		<input type="button" value="삭제" class="btn btn-danger" id="delete"  
+		th:dataId="${question.id}" th:onclick="confirmDelete(this.getAttribute('dataId'))">			
+	</div>
+	
+	
+	<h6 style="margin-top: 50px" th:text = "|${question.answerList.size()} 개의 답변이 있습니다.|"></h6>	
+	<div th:each = 'answer : ${question.answerList}' >
+		<div class="card" style="margin-top: 20px">
+			<div class="card-body">
+				<div th:text = '${answer.content}' style="white-space: pre;"></div>
+			</div>
+		</div>
+	</div>	
+	
+	<div style="margin-top: 10px;">
+		<form th:action = "@{|/answer/create/${question.id}|}"   th:method="post">
+			<textarea style="width: 100%;" name = content rows = "5"></textarea>
+			<input type="submit" value="등록" class="btn btn-info" style="margin-top: 10px;">
+		</form>
+	</div>
+
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form th:action = "@{|/question/modify/${id}|}"  method="post">
+	      <div class="modal-body">
+			<textarea name="content" rows="10" style="width: 100%;"></textarea>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+	        <button type="submit" class="btn btn-primary">등록</button>
+	      </div>
+      </form>
+    </div>
+  </div>
+</div>	
