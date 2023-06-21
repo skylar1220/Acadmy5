@@ -43,10 +43,10 @@ class MySqlTest {
 	@Order(2)
 	@DisplayName("상품명_조회_테스트")
 	public void findByItemNmTest() {
-		List<Item> itemLists = itemRepository.findByItemNm("테스트상품설명 0");		
+		List<Item> itemLists = itemRepository.findByItemNm("테스트상품 1");		
 		assertNotNull(itemLists);		
 		for (Item item : itemLists) {
-			System.out.println(item);
+			System.out.println("-------------"+item);
 		}
 	}
 
@@ -54,8 +54,11 @@ class MySqlTest {
 	@Order(3)
 	@DisplayName("상품명 or 상세설명 조회 테스트")
 	public void test1(){
-		List<Item> itemLists = itemRepository.findByItemNmOrItemDetail("테스트상품설명 1", "test");
+		List<Item> itemLists = itemRepository.findByPriceLessThanOrderByPriceDesc(10005);
 		assertNotNull(itemLists);
+		for (Item item : itemLists) {
+			System.out.println("-------------"+item);
+		}
 	}
 
 }

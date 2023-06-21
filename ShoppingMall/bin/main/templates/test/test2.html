@@ -1,29 +1,26 @@
-
 <head>
-	<title>테스트 1</title>
+	<title>테스트1</title>
 </head>
 
 <body>
-	<h1>상품 출력</h1>
-	
-	<a th:href="@{https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#local-variables}"><h1>타임리프 공식문서 </h1></a>
-	<hr>
-	
-	<a th:href="@{/shop/test3(param1 = '전달1' , param2 = '전달2')}"><h1>링크 파라메터 전달</h1></a>
-	<div th:each="itemDto : ${itemDtoList} ">
+	<h1>상품출력 테스트</h1>
+	<h1>공식문서</h1>
+	<a th:href="@{https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#reformatting-dates-in-our-home-page}">누르세요</a>
+	<h1>링크 파라메터 전달</h1>
+	<a th:href="@{/shop/test3(param1 = '전달1' , param2 = '전달2')}">누르세요param</a>
+	<div th:each="itemDto : ${itemDtoList}">
 		<div>
 			상품명 : <span th:text=${itemDto.itemNm}></span>
 		</div>
 		<div>
-			상품설명 : <span th:text=${itemDto.itemDetail}></span>
+			상품상세설명 : <span th:text=${itemDto.itemDetail}></span>
 		</div>
 		<div>
 			가격 : <span th:text=${itemDto.price}></span>
 		</div>
 		<div>
-			상품등록시간: <span th:text="${#temporals.format(itemDto.regTime,'yyyy-MM-dd / HH:mm')}"></span>
+			등록일 : <span th:text="${#temporals.format(itemDto.regTime, 'yyyy-MM-dd')}"></span>
 		</div>
-		<hr>
+		<br>
 	</div>
-	
 </body>
